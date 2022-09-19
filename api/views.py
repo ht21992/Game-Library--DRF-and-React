@@ -1,5 +1,3 @@
-
-
 from django.http import JsonResponse
 from rest_framework import generics
 from .models import Game
@@ -31,7 +29,6 @@ class CreateGameView(generics.CreateAPIView):
             platforms = serializer.data.get('platforms')
             genre = serializer.data.get('genre')
             desc = serializer.data.get('desc')
-            video = serializer.data.get('video')
 
             Game.objects.create(title=title,
                                 image=image,
@@ -39,7 +36,6 @@ class CreateGameView(generics.CreateAPIView):
                                 platforms=platforms,
                                 genre=genre,
                                 desc=desc,
-                                video=video
                                 )
             return JsonResponse({'status': 200, "msg": f"{title} has been added into game library"})
         else:
@@ -49,3 +45,15 @@ class CreateGameView(generics.CreateAPIView):
 class GameDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
+
+    def put(self, request, format=None, *args, **kwargs):
+        gameId = request.data.get('gameId', '')
+        fav = request.data.get('fav', '')
+
+        if gameId != '':
+            current_game = Game.objects.get(id=gameId)
+
+            current_game.is_fav = bool(fav)
+            current_game.save(update_fields=['is_fav'])
+
+        return self.update(request, *args, **kwargs)

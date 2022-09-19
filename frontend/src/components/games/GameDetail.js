@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useHistory } from "react-router";
+import { useParams } from "react-router";
+
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
@@ -76,7 +77,7 @@ function GameDetail(props) {
         {game.desc}
       </Typography>
         <div style={{width:560, height:349, margin:" 0 auto"}}>
-        <iframe style={{marginTop:100,marginBottom:100, display: "block"}}  src={game.video}></iframe>
+        <iframe style={{marginTop:100,marginBottom:100, display: "block"}}  width="560" height="349" src={game.video}></iframe>
         </div>
     </Container>
   );
