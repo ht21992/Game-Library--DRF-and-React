@@ -1,23 +1,33 @@
+
+from django.shortcuts import render
 from django.http import JsonResponse
-from rest_framework import generics
 from .models import Game
 from .serializers import GameSerializer
+from rest_framework import viewsets
 
 
-class GameView(generics.ListAPIView):
-    queryset = Game.objects.all()
+class GameViewSet(viewsets.ModelViewSet):
+    queryset = Game.objects.all().order_by('-created')
+    lookup_body_field = 'id'
     serializer_class = GameSerializer
 
+    def get_queryset(self):
+        if 'favs' in str(self.request.get_full_path):
+            queryset = Game.objects.filter(is_fav=True).order_by('-created')
+        else:
+            queryset = Game.objects.all().order_by('-created')
+        return queryset
 
-class FavGameView(generics.ListAPIView):
-    queryset = Game.objects.filter(is_fav=True)
-    serializer_class = GameSerializer
+    def partial_update(self, request, *args, **kwargs):
+        gameId = self.request.data.get('gameId', '')
+        fav = self.request.data.get('fav', '')
+        if gameId != '':
+            current_game = Game.objects.get(id=gameId)
+            current_game.is_fav = bool(fav)
+            current_game.save(update_fields=['is_fav'])
+        return super().partial_update(request, *args, **kwargs)
 
-
-class CreateGameView(generics.CreateAPIView):
-    serializer_class = GameSerializer
-
-    def post(self, request, format=None):
+    def create(self, request):  # Here is the new update comes <<<<
         serializer = self.serializer_class(
             data=request.data, context={'request': request})
 
@@ -40,20 +50,3 @@ class CreateGameView(generics.CreateAPIView):
             return JsonResponse({'status': 200, "msg": f"{title} has been added into game library"})
         else:
             return JsonResponse({'status': 400, "msg": serializer.error_messages})
-
-
-class GameDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Game.objects.all()
-    serializer_class = GameSerializer
-
-    def put(self, request, format=None, *args, **kwargs):
-        gameId = request.data.get('gameId', '')
-        fav = request.data.get('fav', '')
-
-        if gameId != '':
-            current_game = Game.objects.get(id=gameId)
-
-            current_game.is_fav = bool(fav)
-            current_game.save(update_fields=['is_fav'])
-
-        return self.update(request, *args, **kwargs)

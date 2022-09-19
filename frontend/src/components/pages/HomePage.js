@@ -10,7 +10,7 @@ function HomePage() {
 
   useEffect(() =>{
     setIsLoading(true);
-    fetch("/api/games")
+    fetch("/api/games?hey")
     .then((response) => {
         return response.json();
       })

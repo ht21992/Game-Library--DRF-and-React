@@ -65,7 +65,7 @@ function AddGamePage() {
     };
     console.log(enteredDescription)
     fetch(
-      "/api/add-game",
+      "/api/games/",
       {
         method: 'POST',
         body: JSON.stringify(Gamedata),

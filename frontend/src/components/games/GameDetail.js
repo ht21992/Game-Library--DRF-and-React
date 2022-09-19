@@ -16,7 +16,7 @@ function GameDetail(props) {
 
   useEffect(() => {
     setIsLoading(true);
-    fetch(`/api/game/${id}`)
+    fetch(`/api/games/${id}`)
       .then((response) => {
         return response.json();
       })

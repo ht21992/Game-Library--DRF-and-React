@@ -40,8 +40,8 @@ function GameItem(props) {
 
   function FormSubmitHandler(event) {
     event.preventDefault();
-    fetch(`/api/game/${props.id}`, {
-      method: "PUT",
+    fetch(`/api/games/${props.id}/`, {
+      method: "PATCH",
       body: JSON.stringify({ gameId: props.id, fav: isActive }),
       headers: {
         "Content-Type": "application/json",

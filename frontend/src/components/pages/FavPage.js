@@ -6,7 +6,7 @@ function FavPage(props){
     const [loadedGames, setLoadedGames] = useState([]);
     useEffect(() =>{
         setIsLoading(true);
-        fetch("/api/favs")
+        fetch("/api/games?favs")
         .then((response) => {
             return response.json();
           })
